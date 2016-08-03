@@ -93,8 +93,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		return FALSE;
 	}
 
-	ShowWindow(hWnd, nCmdShow);
-	UpdateWindow(hWnd);
+	//ShowWindow(hWnd, nCmdShow);
+	//UpdateWindow(hWnd);
 
 	RegisterHotKey(hWnd, 100, MOD_CONTROL | MOD_SHIFT, 0x58); // Ctrl+Shift+X
 	return TRUE;
