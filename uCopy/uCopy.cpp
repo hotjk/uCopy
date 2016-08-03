@@ -109,6 +109,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_DEVICECHANGE:
 		DeviceChange(hWnd, wParam, lParam);
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
@@ -121,15 +122,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 void DeviceChange(HWND hwnd, WPARAM wParam, LPARAM lParam)
 {
 	TCHAR szMsg[80];
-	if (DBT_DEVICEARRIVAL == wParam) {
+	if (DBT_DEVICEARRIVAL == wParam || DBT_DEVICEREMOVECOMPLETE == wParam) {
 		PDEV_BROADCAST_HDR pHdr = (PDEV_BROADCAST_HDR)lParam;
 		PDEV_BROADCAST_VOLUME pDevVolume;
-		if(pHdr->dbch_devicetype == DBT_DEVTYP_VOLUME){
+		switch (pHdr->dbch_devicetype) {
+		case DBT_DEVTYP_VOLUME:
 			pDevVolume = (PDEV_BROADCAST_VOLUME)pHdr;
-			StringCchPrintf(szMsg, sizeof(szMsg) / sizeof(szMsg[0]),
-				TEXT("%c:"),
-				FirstDriveFromMask(pDevVolume->dbcv_unitmask));
-			FindFilesRecursively(szMsg, szArgList[1], szArgList[2]);
+			if (DBT_DEVICEARRIVAL == wParam) {
+				StringCchPrintf(szMsg, sizeof(szMsg) / sizeof(szMsg[0]),
+					TEXT("%c:"),
+					FirstDriveFromMask(pDevVolume->dbcv_unitmask));
+				FindFilesRecursively(szMsg, szArgList[1], szArgList[2]);
+			}
+			break;
 		}
 	}
 }
